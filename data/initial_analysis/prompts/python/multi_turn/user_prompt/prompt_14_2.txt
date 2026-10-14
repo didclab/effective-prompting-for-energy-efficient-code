@@ -1,0 +1,1 @@
+Give a potential strategy improving the energy-efficiency of the generated code.

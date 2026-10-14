@@ -1,0 +1,65 @@
+Please solve the task based on the task description by following three steps:
+First, Write a correct and simple solution to pass the provided test cases.
+Second, Analyze your solution to identify performance bottlenecks or inefficiencies.
+Third, If possible, provide an optimized solution with a brief explanation.
+
+You must follow the following rules:
+First, The code should be in ```python\n[Code]\n``` block.
+Second, You should NOT include the test cases inside the code block.
+Third, You do not need to write the test cases, we will provide them separately.
+Finally, Your solution must be correct and pass all provided test cases.
+
+Here is an example:
+
+# Task description
+```python
+Given an array of integers, return indices of the two numbers such that they add up to a specific target.
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+Example:
+Given nums = [2, 7, 11, 15], target = 9,
+Because nums[0] + nums[1] = 2 + 7 = 9,
+return [0, 1].
+```
+
+# Test cases
+```python
+solution = Solution()
+assert solution.twoSum([2, 7, 11, 15], 9) == [[0, 1]]
+```
+
+# Step 1: Initial Solution
+```python
+from typing import *
+import random
+
+class Solution:
+    def twoSum(self, nums, target):
+        hashtable = dict()
+        for i, num in enumerate(nums):
+            if target - num in hashtable:
+                return [hashtable[target - num], i]
+            hashtable[nums[i]] = i
+        return []
+```
+
+# Step 2: Analysis
+The above solution is a brute-force solution checks every pair, and it has O(n^2) time complexity. This is inefficient for large arrays. We can optimize it using a hash map to reduce it to O(n).
+
+# Step 3: Optimized Code
+```python
+from typing import *
+class Solution:
+    def twoSum(self, nums, target):
+        seen = {}
+        for i, num in enumerate(nums):
+            if target - num in seen:
+                return [seen[target - num], i]
+            seen[num] = i
+```
+
+# Explanation
+We use a hash map (seen) to store each number's index while iterating.
+This allows us to check for the complement in O(1) time, reducing overall complexity to O(n).
+
+
+

@@ -1,0 +1,48 @@
+Please based on the task description write Solution to pass the provided test cases.
+You must follow the following rules:
+First, the code should be in ```cpp\n[Code]\n``` block.
+Second, You should not add the provided test cases into your ```\ncpp[Code]\n``` block.
+Third, You do not need to write the test cases, we will provide the test cases for you.
+Finally, you should make sure that the provided test cases can pass your solution.
+
+Here is a example:
+Example:
+# Task description
+```cpp
+Given an array of integers, return indices of the two numbers such that they add up to a specific target.
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+Example:
+Given nums = [2, 7, 11, 15], target = 9,
+Because nums[0] + nums[1] = 2 + 7 = 9,
+return [0, 1].
+```
+
+# Test cases
+```cpp
+[
+{
+            "main_fun": "\n\nint main() {\n\tSolution solution=Solution();\n\tstd::vector<int> nums = {-40};\n\tcout << solution.removeDuplicates(nums)<< endl;\n\n    return 0;\n}",
+            "output": 1
+        },
+        {
+            "main_fun": "\n\nint main() {\n\tSolution solution=Solution();\n\tstd::vector<int> nums = {-84, -61, -46, -35, -28, 39, 55, 73, 81};\n\tcout << solution.removeDuplicates(nums)<< endl;\n\n    return 0;\n}",
+            "output": 9
+        },
+]
+```
+
+# Code
+```cpp
+#include <iostream>
+#include <algorithm>
+using namespace std;
+#include <vector>
+class Solution {
+public:
+    int removeDuplicates(std::vector<int>& nums) {
+        auto newEnd = std::unique(nums.begin(), nums.end());
+        nums.erase(newEnd, nums.end());
+        return nums.size();
+    }
+};
+```

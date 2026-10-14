@@ -1,0 +1,1248 @@
+Please based on the task description write Solution to pass the provided test cases.
+You must follow the following rules:
+1. The code should be in ```cpp\n[Code]\n``` block.
+2. You do not need to write the test cases, we will provide the test cases for you.
+3. Make sure that the provided test cases can pass your solution.
+4. Prefer the energy-efficient solution from the provided examples of inefficient and efficient solutions.
+5. Always choose the most efficient algorithm in terms of both time and memory.
+
+Here are examples:
+# Task description
+```cpp
+You are given a string word, and an integer numFriends.\nAlice is organizing a game for her numFriends friends.
+There are multiple rounds in the game, where in each round:\n\nword is split into numFriends non-empty strings,
+such that no previous round has had the exact same split.\nAll the split words are put into a box.\n\nFind the
+lexicographically largest string from the box after all the rounds are finished.\n \nExample 1:\n\nInput: word =
+\"dbca\", numFriends = 2\nOutput: \"dbc\"\nExplanation: \nAll possible splits are:\n\n\"d\" and \"bca\".\n\"db\"
+and \"ca\".\n\"dbc\" and \"a\".\n\n\nExample 2:\n\nInput: word = \"gggg\", numFriends = 4\nOutput:
+\"g\"\nExplanation: \nThe only possible split is: \"g\", \"g\", \"g\", and \"g\".\n\n \nConstraints:\n\n1 <=
+word.length <= 5 * 103\nword consists only of lowercase English letters.\n1 <= numFriends <= word.length
+```
+# Inefficient Code
+```cpp
+#include <string>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    string answerString(string word, int numFriends) {
+        if (numFriends == 1) {
+            return word;
+        }
+
+        char max_ch = *max_element(word.begin(), word.end());
+
+        if (word.length() == numFriends) {
+            return string(1, max_ch);
+        }
+
+        int max_len = word.length() - numFriends + 1;
+        string res = "";
+        int i = 0;
+
+        while (i < word.length()) {
+            char c = word[i];
+            int l = 1;
+
+            if (c == max_ch) {
+                while (i + l <= word.length() &&
+                       l <= max_len &&
+                       res <= word.substr(i, max(l, (int)res.length()))) {
+
+                    res = max(res, word.substr(i, l));
+                    l += 1;
+                }
+            }
+            i += 1;
+        }
+
+        return res;
+    }
+};
+```
+# Efficient Code
+```cpp
+#include <string>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    string answerString(string word, int numFriends) {
+        if (numFriends == 1)
+            return word;
+
+        int lengg = word.length() - numFriends + 1;
+        char max_char = *max_element(word.begin(), word.end());
+        string res = "";
+
+        for (int i = 0; i < word.length(); i++) {
+            if (word[i] == max_char) {
+                string sub = word.substr(i, lengg);
+                res = max(res, sub);
+            }
+        }
+
+        return res;
+    }
+};
+```
+# Task description
+```cpp
+You are given an integer n representing the dimensions of an n x n grid, with the origin at the bottom-left
+corner of the grid. You are also given a 2D array of coordinates rectangles, where rectangles[i] is in the form
+[startx, starty, endx, endy], representing a rectangle on the grid. Each rectangle is defined as follows:
+(startx, starty): The bottom-left corner of the rectangle.(endx, endy): The top-right corner of the
+rectangle.Note that the rectangles do not overlap. Your task is to determine if it is possible to make either two
+horizontal or two vertical cuts on the grid such that: Each of the three resulting sections formed by the cuts
+contains at least one rectangle. Every rectangle belongs to exactly one section. Return true if such cuts can be
+made; otherwise, return false.
+Example 1:
+Input: n = 5, rectangles = [[1,0,5,2],[0,2,2,4],[3,2,5,3],[0,4,4,5]]
+Output: true
+Explanation:
+The grid is shown in the diagram. We can make horizontal cuts at y = 2 and y = 4. Hence, output is true.
+Example 2:
+Input: n = 4, rectangles = [[0,0,1,1],[2,0,3,4],[0,2,2,3],[3,0,4,3]]
+Output: true
+Explanation:
+We can make vertical cuts at x = 2 and x = 3. Hence, output is true.
+Example 3:
+Input: n = 4, rectangles = [[0,2,2,4],[1,0,3,2],[2,2,3,4],[3,0,4,2],[3,2,4,4]]
+Output: false
+Explanation:
+We cannot make two horizontal or two vertical cuts that satisfy the conditions. Hence, output is false.
+Constraints:
+3 <= n <= 109
+3 <= rectangles.length <= 105
+0 <= rectangles[i][0] < rectangles[i][2] <= n
+0 <= rectangles[i][1] < rectangles[i][3] <= n
+No two rectangles overlap.
+```
+# Inefficient Code
+```cpp
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    bool checkValidCuts(int n, vector<vector<int>>& rectangles) {
+        vector<vector<int>> rectangles_x, rectangles_y;
+        for (auto& rectangle : rectangles) {
+            rectangles_x.push_back({rectangle[0], rectangle[2]});
+            rectangles_y.push_back({rectangle[1], rectangle[3]});
+        }
+        sort(rectangles_x.begin(), rectangles_x.end());
+        sort(rectangles_y.begin(), rectangles_y.end());
+        int prev_end_x = rectangles_x[0][1], prev_end_y = rectangles_y[0][1];
+        int num_cuts_x = 0, num_cuts_y = 0;
+        for (int i = 1; i < rectangles_x.size(); i++) {
+            if (rectangles_x[i][0] < prev_end_x) {
+                prev_end_x = max(prev_end_x, rectangles_x[i][1]);
+            } else {
+                num_cuts_x += 1;
+                prev_end_x = rectangles_x[i][1];
+            }
+        }
+        for (int i = 1; i < rectangles_y.size(); i++) {
+            if (rectangles_y[i][0] < prev_end_y) {
+                prev_end_y = max(prev_end_y, rectangles_y[i][1]);
+            } else {
+                num_cuts_y += 1;
+                prev_end_y = rectangles_y[i][1];
+            }
+        }
+        return num_cuts_x >= 2 || num_cuts_y >= 2;
+    }
+};
+```
+# Efficient Code
+```cpp
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    bool checkValidCuts(int n, vector<vector<int>>& rectangles) {
+        auto can_two_cuts = [&](int axis_start, int axis_end) {
+            vector<vector<int>> rects = rectangles;
+            sort(rects.begin(), rects.end(), [&](const vector<int>& a, const vector<int>& b) {
+                return a[axis_start] < b[axis_start];
+            });
+            int groups = 1;
+            int cur_end = rects[0][axis_end];
+            for (int i = 1; i < rects.size(); i++) {
+                int s = rects[i][axis_start], e = rects[i][axis_end];
+                if (s >= cur_end) {
+                    groups += 1;
+                    cur_end = e;
+                } else {
+                    if (e > cur_end) {
+                        cur_end = e;
+                    }
+                }
+                if (groups >= 3) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        return can_two_cuts(0, 2) || can_two_cuts(1, 3);
+    }
+};
+```
+#Task description
+```cpp
+You are given an array of integers nums of length n and a positive integer k.
+The power of an array is defined as:Its maximum element if all of its elements are consecutive and sorted in
+ascending order.
+-1 otherwise.You need to find the power of all subarrays of nums of size k.
+Return an integer array results of size n - k + 1, where results[i] is the power of nums[i..(i + k - 1)].
+Example 1:
+Input: nums = [1,2,3,4,3,2,5], k = 3
+Output: [3,4,-1,-1,-1]
+Explanation:
+There are 5 subarrays of nums of size 3:
+[1, 2, 3] with the maximum element 3.
+[2, 3, 4] with the maximum element 4.
+[3, 4, 3] whose elements are not consecutive.
+[4, 3, 2] whose elements are not sorted.
+[3, 2, 5] whose elements are not consecutive.
+Example 2:
+Input: nums = [2,2,2,2,2], k = 4
+Output: [-1,-1]
+Example 3:
+Input: nums = [3,2,3,2,3,2], k = 2
+Output: [-1,3,-1,3,-1]
+Constraints:
+1 <= n == nums.length <= 500
+1 <= nums[i] <= 105
+1 <= k <= n
+```
+# Inefficient Code
+```cpp
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> resultsArray(vector<int>& nums, int k) {
+        vector<int> ans;
+        int n = nums.size();
+        for (int i = 0; i <= n - k; i++) {
+            vector<int> win(nums.begin() + i, nums.begin() + i + k);
+            vector<int> arr;
+            for (int j = 0; j < k; j++) {
+                arr.push_back(nums[i] + j);
+            }
+            if (win == arr) {
+                ans.push_back(win[k - 1]);
+            } else {
+                ans.push_back(-1);
+            }
+        }
+        return ans;
+    }
+};
+```
+# Efficient Code
+```cpp
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> resultsArray(vector<int>& nums, int k) {
+        int n = nums.size();
+        if (k == 1) {
+            return nums;
+        }
+        vector<int> results;
+        int l = 1;
+        for (int right = 1; right < n; right++) {
+            if (nums[right] == nums[right - 1] + 1) {
+                l += 1;
+            } else {
+                l = 1;
+            }
+            if (right >= k - 1) {
+                if (l >= k) {
+                    results.push_back(nums[right]);
+                } else {
+                    results.push_back(-1);
+                }
+            }
+        }
+        return results;
+    }
+};
+```
+#Task description
+```cpp
+You are given an integer n and a 2D integer array queries.
+There are n cities numbered from 0 to n - 1. Initially, there is a unidirectional road from city i to city i + 1 for all 0
+<= i < n - 1.
+queries[i] = [ui, vi] represents the addition of a new unidirectional road from city ui to city vi. After each query, you
+need to find the length of the shortest path from city 0 to city n - 1.
+Return an array answer where for each i in the range [0, queries.length - 1], answer[i] is the length of the shortest path
+from city 0 to city n - 1 after processing the first i + 1 queries.
+Example 1:
+Input: n = 5, queries = [[2,4],[0,2],[0,4]]
+Output: [3,2,1]
+Explanation:
+After the addition of the road from 2 to 4, the length of the shortest path from 0 to 4 is 3.
+After the addition of the road from 0 to 2, the length of the shortest path from 0 to 4 is 2.
+After the addition of the road from 0 to 4, the length of the shortest path from 0 to 4 is 1.
+Example 2:
+Input: n = 4, queries = [[0,3],[0,2]]
+Output: [1,1]
+Explanation:
+After the addition of the road from 0 to 3, the length of the shortest path from 0 to 3 is 1.
+After the addition of the road from 0 to 2, the length of the shortest path remains 1.
+Constraints:
+3 <= n <= 500
+1 <= queries.length <= 500
+queries[i].length == 2
+0 <= queries[i][0] < queries[i][1] < n
+1 < queries[i][1] - queries[i][0]
+There are no repeated roads among the queries.
+```
+# Inefficient Code
+```cpp
+#include <vector>
+#include <queue>
+#include <unordered_set>
+using namespace std;
+
+class Solution {
+public:
+    int bfs(int n, vector<vector<int>>& adj) {
+        queue<pair<int,int>> q;
+        q.push({0,0});
+        unordered_set<int> visit;
+
+        while (!q.empty()) {
+            auto [node, dist] = q.front();
+            q.pop();
+
+            visit.insert(node);
+
+            if (node == n - 1) {
+                return dist;
+            }
+
+            for (int nb : adj[node]) {
+                if (!visit.count(nb)) {
+                    q.push({nb, dist + 1});
+                }
+            }
+        }
+        return -1;
+    }
+
+    vector<int> shortestDistanceAfterQueries(int n, vector<vector<int>>& queries) {
+        vector<vector<int>> adj(n);
+
+        for (int i = 1; i < n; i++) {
+            adj[i - 1].push_back(i);
+        }
+
+        vector<int> ans;
+
+        for (auto& q : queries) {
+            int u = q[0], v = q[1];
+            adj[u].push_back(v);
+            ans.push_back(bfs(n, adj));
+        }
+
+        return ans;
+    }
+};
+```
+# Efficient Code
+```cpp
+#include <vector>
+#include <queue>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> shortestDistanceAfterQueries(int n, vector<vector<int>>& queries) {
+        vector<vector<int>> g;
+        for (int i = 0; i < n - 1; i++) {
+            g.push_back({i + 1});
+        }
+        g.push_back({});
+
+        vector<int> dist(n);
+        for (int i = 0; i < n; i++) {
+            dist[i] = i;
+        }
+
+        vector<int> ans;
+
+        for (auto& q : queries) {
+            int u = q[0], v = q[1];
+            g[u].push_back(v);
+
+            if (dist[u] + 1 < dist[v]) {
+                dist[v] = dist[u] + 1;
+                queue<int> qu;
+                qu.push(v);
+
+                while (!qu.empty()) {
+                    int x = qu.front();
+                    qu.pop();
+
+                    for (int y : g[x]) {
+                        if (dist[x] + 1 < dist[y]) {
+                            dist[y] = dist[x] + 1;
+                            qu.push(y);
+                        }
+                    }
+                }
+            }
+
+            ans.push_back(dist[n - 1]);
+        }
+
+        return ans;
+    }
+};
+```
+
+
+#Task description
+```cpp
+You are given an array of positive integers nums of length n.
+We call a pair of non-negative integer arrays (arr1, arr2) monotonic if:
+The lengths of both arrays are n.
+arr1 is monotonically non-decreasing, in other words, arr1[0] <= arr1[1] <= ... <= arr1[n - 1].
+arr2 is monotonically non-increasing, in other words, arr2[0] >= arr2[1] >= ... >= arr2[n - 1].
+arr1[i] + arr2[i] == nums[i] for all 0 <= i <= n - 1.
+Return the count of monotonic pairs.
+Since the answer may be very large, return it modulo 109 + 7.
+Example 1:
+Input: nums = [2,3,2]
+Output: 4
+Explanation:
+The good pairs are:
+([0, 1, 1], [2, 2, 1])
+([0, 1, 2], [2, 2, 0])
+([0, 2, 2], [2, 1, 0])
+([1, 2, 2], [1, 1, 0])
+Example 2:
+Input: nums = [5,5,5,5]
+Output: 126
+Constraints:
+1 <= n == nums.length <= 2000
+1 <= nums[i] <= 50
+```
+# Inefficient Code
+```cpp
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+class Solution {
+public:
+    int countOfPairs(vector<int>& nums) {
+        const long long M = 1000000007;
+
+        unordered_map<long long, long long> dp;
+
+        for (int x = 0; x <= nums[0]; x++) {
+            long long key = ((long long)x << 32) | (nums[0] - x);
+            dp[key] = 1;
+        }
+
+        for (int i = 1; i < nums.size(); i++) {
+            int num = nums[i];
+            unordered_map<long long, long long> dp1;
+
+            for (int j = 0; j <= num; j++) {
+                long long total = 0;
+
+                for (int k = 0; k <= nums[i - 1]; k++) {
+                    if (k >= j && nums[i - 1] - k <= num - j) {
+                        long long key = ((long long)k << 32) | (nums[i - 1] - k);
+                        if (dp.count(key)) {
+                            total += dp[key];
+                        }
+                    }
+                }
+
+                if (total) {
+                    long long newkey = ((long long)j << 32) | (num - j);
+                    dp1[newkey] = total % M;
+                }
+            }
+
+            dp = move(dp1);
+        }
+
+        long long result = 0;
+        for (auto& p : dp) {
+            result = (result + p.second) % M;
+        }
+
+        return result;
+    }
+};
+```
+# Efficient Code
+```cpp
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    const long long MOD = 1000000007;
+
+    long long modPow(long long a, long long b) {
+        long long res = 1;
+        a %= MOD;
+        while (b) {
+            if (b & 1) res = (res * a) % MOD;
+            a = (a * a) % MOD;
+            b >>= 1;
+        }
+        return res;
+    }
+
+    long long modInverse(long long x) {
+        return modPow(x, MOD - 2);
+    }
+
+    long long comb(long long N, long long K) {
+        if (K > N) return 0;
+        long long res = 1;
+        for (long long i = 1; i <= K; i++) {
+            res = res * (N - K + i) % MOD;
+            res = res * modInverse(i) % MOD;
+        }
+        return res;
+    }
+
+    int countOfPairs(vector<int>& nums) {
+        int n = nums.size();
+        int mn = nums[0];
+        int num1 = 0, num2 = mn;
+
+        for (int i = 1; i < n; i++) {
+            int num = nums[i];
+
+            if (num < num1) return 0;
+
+            if (num > num1 + num2) {
+                num1 = num - num2;
+            }
+
+            num2 = num - num1;
+
+            if (num2 < mn) mn = num2;
+        }
+
+        return comb(n + mn, mn) % MOD;
+    }
+};
+```
+#Task description
+```cpp
+There is an undirected tree with n nodes labeled from 0 to n - 1, and rooted at node 0. You are given a 2D integer
+array edges of length n - 1, where edges[i] = [ai, bi] indicates that there is an edge between nodes ai and bi in
+the tree.
+A node is good if all the subtrees rooted at its children have the same size.
+Return the number of good nodes in the given tree.
+A subtree of treeName is a tree consisting of a node in treeName and all of its descendants.
+Example 1:
+Input: edges = [[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]]
+Output: 7
+Explanation:
+All of the nodes of the given tree are good.
+Example 2:
+Input: edges = [[0,1],[1,2],[2,3],[3,4],[0,5],[1,6],[2,7],[3,8]]
+Output: 6
+Explanation:
+There are 6 good nodes in the given tree. They are colored in the image above.
+Example 3:
+Input: edges = [[0,1],[1,2],[1,3],[1,4],[0,5],[5,6],[6,7],[7,8],[0,9],[9,10],[9,12],[10,11]]
+Output: 12
+Explanation:
+All nodes except node 9 are good.
+Constraints:
+2 <= n <= 105
+edges.length == n - 1
+edges[i].length == 2
+0 <= ai, bi < n
+The input is generated such that edges represents a valid tree.
+```
+# Inefficient Code
+```cpp
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+class Solution {
+public:
+    unordered_map<int, pair<int, vector<int>>> hashmap;
+
+    int dfs(int node, vector<vector<int>>& adj_matrix, int parent) {
+        int count = 0;
+        vector<int> neighbours;
+
+        for (int children : adj_matrix[node]) {
+            count += 1;
+            if (children != parent) {
+                neighbours.push_back(children);
+                count += dfs(children, adj_matrix, node);
+            }
+        }
+
+        hashmap[node] = {count, neighbours};
+        return count;
+    }
+
+    int countGoodNodes(vector<vector<int>>& edges) {
+        int num_nodes = edges.size() + 1;
+        vector<vector<int>> adj_matrix(num_nodes);
+
+        for (auto& e : edges) {
+            int a = e[0], b = e[1];
+            adj_matrix[a].push_back(b);
+            adj_matrix[b].push_back(a);
+        }
+
+        dfs(0, adj_matrix, -1);
+
+        int total_count = 0;
+
+        for (int node = 0; node < num_nodes; node++) {
+            vector<int> child_sizes;
+
+            for (int neighbor : adj_matrix[node]) {
+                if (hashmap.count(neighbor) && hashmap[neighbor].first < hashmap[node].first) {
+                    child_sizes.push_back(hashmap[neighbor].first);
+                }
+            }
+
+            if (child_sizes.size() <= 1) {
+                total_count++;
+            } else {
+                bool same = true;
+                for (int i = 1; i < child_sizes.size(); i++) {
+                    if (child_sizes[i] != child_sizes[0]) {
+                        same = false;
+                        break;
+                    }
+                }
+                if (same) total_count++;
+            }
+        }
+
+        return total_count;
+    }
+};
+```
+# Efficient Code
+```cpp
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    int res = 0;
+
+    int recurse(int parent, int curr, vector<vector<int>>& adj_list) {
+        int sum = 0;
+        bool good = true;
+        int good_cnt = -1;
+
+        for (int adj : adj_list[curr]) {
+            if (adj != parent) {
+                int adj_cnt = recurse(curr, adj, adj_list);
+                sum += adj_cnt;
+
+                if (good_cnt != -1 && adj_cnt != good_cnt) {
+                    good = false;
+                } else {
+                    good_cnt = adj_cnt;
+                }
+            }
+        }
+
+        if (good) {
+            res += 1;
+        }
+
+        return sum + 1;
+    }
+
+    int countGoodNodes(vector<vector<int>>& edges) {
+        int n = edges.size() + 1;
+        vector<vector<int>> adj_list(n);
+
+        for (auto& e : edges) {
+            int n1 = e[0], n2 = e[1];
+            adj_list[n1].push_back(n2);
+            adj_list[n2].push_back(n1);
+        }
+
+        recurse(-1, 0, adj_list);
+        return res;
+    }
+};
+```
+#Task description
+```cpp
+You are given a positive number n.
+Return the smallest number x greater than or equal to n, such that the binary representation of x contains only set bits
+Example 1:
+Input: n = 5
+Output: 7
+Explanation:
+The binary representation of 7 is "111".
+Example 2:
+Input: n = 10
+Output: 15
+Explanation:
+The binary representation of 15 is "1111".
+Example 3:
+Input: n = 3
+Output: 3
+Explanation:
+The binary representation of 3 is "11".
+Constraints:
+1 <= n <= 1000
+```
+# Inefficient Code
+```cpp
+#include <string>
+using namespace std;
+
+class Solution {
+public:
+    int smallestNumber(int n) {
+        while (n >= 0) {
+            string k1 = "";
+            int temp = n;
+
+            while (temp > 0) {
+                k1 = char('0' + (temp % 2)) + k1;
+                temp /= 2;
+            }
+
+            int k2 = 0;
+            for (char c : k1) {
+                if (c == '1') k2++;
+            }
+
+            if (k2 == k1.length()) {
+                return n;
+            }
+
+            n += 1;
+        }
+        return n;
+    }
+};
+```
+# Efficient Code
+```cpp
+class Solution {
+public:
+    int smallestNumber(int n) {
+        int i = 1;
+        while ((1 << i) - 1 < n) {
+            i += 1;
+        }
+        return (1 << i) - 1;
+    }
+};
+```
+#Task description
+```cpp
+You are given an integer array nums and two integers k and numOperations.
+You must perform an operation numOperations times on nums, where in each operation you:
+Select an index i that was not selected in any previous operations.
+Add an integer in the range [-k, k] to nums[i].
+Return the maximum possible frequency of any element in nums after performing the operations.
+Example 1:
+Input: nums = [1,4,5], k = 1, numOperations = 2
+Output: 2
+Explanation:
+We can achieve a maximum frequency of two by:
+Adding 0 to nums[1]. nums becomes [1, 4, 5].
+Adding -1 to nums[2]. nums becomes [1, 4, 4].
+Example 2:
+Input: nums = [5,11,20,20], k = 5, numOperations = 1
+Output: 2
+Explanation:
+We can achieve a maximum frequency of two by:
+Adding 0 to nums[1].
+Constraints:
+1 <= nums.length <= 105
+1 <= nums[i] <= 105
+0 <= k <= 105
+0 <= numOperations <= nums.length
+```
+# Inefficient Code
+```cpp
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    int maxFrequency(vector<int>& nums, int k, int numOperations) {
+        vector<pair<int,int>> diff;
+        unordered_map<int,int> cnt;
+
+        for (int i : nums) {
+            diff.push_back({i - k, 1});
+            diff.push_back({i + k + 1, -1});
+            cnt[i] += 1;
+            diff.push_back({i, 0});
+        }
+
+        sort(diff.begin(), diff.end());
+
+        int res = 0;
+        int curr = 0;
+
+        for (auto& [idx, change] : diff) {
+            curr += change;
+            res = max(res, min(cnt[idx] + numOperations, curr));
+        }
+
+        return res;
+    }
+};
+```
+# Efficient Code
+```cpp
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    int maxFrequency(vector<int>& nums, int k, int numOperations) {
+        int maxi = *max_element(nums.begin(), nums.end());
+        vector<int> pre(maxi + 1, 0);
+
+        for (int i : nums) {
+            pre[i] += 1;
+        }
+
+        int prev = 0, ans = 0;
+
+        int cur = 0;
+        for (int i = 0; i < k && i <= maxi; i++) {
+            cur += pre[i];
+        }
+
+        for (int num = 0; num <= maxi; num++) {
+            cur -= pre[num];
+
+            if (num + k <= maxi) {
+                cur += pre[num + k];
+            }
+
+            if (num > 0) {
+                prev += pre[num - 1];
+            }
+
+            if (num > k + 1) {
+                prev -= pre[num - k - 1];
+            }
+
+            ans = max(ans, pre[num] + min(numOperations, prev + cur));
+        }
+
+        return ans;
+    }
+};
+```
+#Task description
+```cpp
+You are given an integer n and a 2D integer array queries.
+There are n cities numbered from 0 to n - 1. Initially, there is a unidirectional road from city i to city i + 1 for all 0
+<= i < n - 1.
+queries[i] = [ui, vi] represents the addition of a new unidirectional road from city ui to city vi. After each query, you
+need to find the length of the shortest path from city 0 to city n - 1.
+Return an array answer where for each i in the range [0, queries.length - 1], answer[i] is the length of the shortest path
+from city 0 to city n - 1 after processing the first i + 1 queries.
+Example 1:
+Input: n = 5, queries = [[2,4],[0,2],[0,4]]
+Output: [3,2,1]
+Explanation:
+After the addition of the road from 2 to 4, the length of the shortest path from 0 to 4 is 3.
+After the addition of the road from 0 to 2, the length of the shortest path from 0 to 4 is 2.
+After the addition of the road from 0 to 4, the length of the shortest path from 0 to 4 is 1.
+Example 2:
+Input: n = 4, queries = [[0,3],[0,2]]
+Output: [1,1]
+Explanation:
+After the addition of the road from 0 to 3, the length of the shortest path from 0 to 3 is 1.
+After the addition of the road from 0 to 2, the length of the shortest path remains 1.
+Constraints:
+3 <= n <= 500
+1 <= queries.length <= 500
+queries[i].length == 2
+0 <= queries[i][0] < queries[i][1] < n
+1 < queries[i][1] - queries[i][0]
+There are no repeated roads among the queries.
+```
+# Inefficient Code
+```cpp
+#include <vector>
+#include <queue>
+#include <unordered_set>
+using namespace std;
+
+class Solution {
+public:
+    int bfs(int n, vector<vector<int>>& adj) {
+        queue<pair<int,int>> q;
+        q.push({0,0});
+        unordered_set<int> visit;
+
+        while (!q.empty()) {
+            auto [node, dist] = q.front();
+            q.pop();
+
+            visit.insert(node);
+
+            if (node == n - 1) {
+                return dist;
+            }
+
+            for (int nb : adj[node]) {
+                if (!visit.count(nb)) {
+                    q.push({nb, dist + 1});
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    vector<int> shortestDistanceAfterQueries(int n, vector<vector<int>>& queries) {
+        vector<vector<int>> adj(n);
+
+        for (int i = 1; i < n; i++) {
+            adj[i - 1].push_back(i);
+        }
+
+        vector<int> ans;
+
+        for (auto& q : queries) {
+            int u = q[0];
+            int v = q[1];
+
+            adj[u].push_back(v);
+            ans.push_back(bfs(n, adj));
+        }
+
+        return ans;
+    }
+};
+```
+# Efficient Code
+```cpp
+#include <vector>
+#include <queue>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> shortestDistanceAfterQueries(int n, vector<vector<int>>& queries) {
+        vector<vector<int>> g(n);
+
+        for (int i = 0; i < n - 1; i++) {
+            g[i].push_back(i + 1);
+        }
+
+        vector<int> dist(n);
+        for (int i = 0; i < n; i++) {
+            dist[i] = i;
+        }
+
+        vector<int> ans;
+
+        for (auto& q : queries) {
+            int u = q[0];
+            int v = q[1];
+
+            g[u].push_back(v);
+
+            if (dist[u] + 1 < dist[v]) {
+                dist[v] = dist[u] + 1;
+                queue<int> qu;
+                qu.push(v);
+
+                while (!qu.empty()) {
+                    int x = qu.front();
+                    qu.pop();
+
+                    for (int y : g[x]) {
+                        if (dist[x] + 1 < dist[y]) {
+                            dist[y] = dist[x] + 1;
+                            qu.push(y);
+                        }
+                    }
+                }
+            }
+
+            ans.push_back(dist[n - 1]);
+        }
+
+        return ans;
+    }
+};
+```
+#Task description
+```cpp
+Given an integer n, an alternating permutation is a permutation of the first n positive integers such that no two adjacent
+elements are both odd or both even.
+Return all such alternating permutations sorted in lexicographical order.
+Example 1:
+Input: n = 4
+Output: [[1,2,3,4],[1,4,3,2],[2,1,4,3],[2,3,4,1],[3,2,1,4],[3,4,1,2],[4,1,2,3],[4,3,2,1]]
+Example 2:
+Input: n = 2
+Output: [[1,2],[2,1]]
+Example 3:
+Input: n = 3
+Output: [[1,2,3],[3,2,1]]
+Constraints:
+1 <= n <= 10
+```
+# Inefficient Code
+```cpp
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    vector<vector<int>> permute(int n) {
+        vector<vector<int>> res;
+
+        vector<int> lst;
+        for (int i = 1; i <= n; i++) {
+            lst.push_back(i);
+        }
+
+        do {
+            int x = 1;
+
+            for (int i = 0; i < n - 1; i++) {
+                if ((lst[i] % 2 == 0 && lst[i + 1] % 2 != 0) ||
+                    (lst[i] % 2 != 0 && lst[i + 1] % 2 == 0)) {
+                    x++;
+                }
+            }
+
+            if (x == n) {
+                res.push_back(lst);
+            }
+
+        } while (next_permutation(lst.begin(), lst.end()));
+
+        return res;
+    }
+};
+```
+# Efficient Code
+```cpp
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    vector<vector<int>> permute(int n) {
+        vector<vector<int>> res;
+        vector<int> s(n);
+
+        for (int i = 0; i < n; i++) {
+            s[i] = i + 1;
+        }
+
+        dfs(0, n, s, res);
+
+        sort(res.begin(), res.end());
+        return res;
+    }
+
+private:
+    void dfs(int start, int n, vector<int>& s, vector<vector<int>>& res) {
+        if (start == n) {
+            res.push_back(s);
+            return;
+        }
+
+        for (int i = start; i < n; i++) {
+            if (start > 0 && (s[start - 1] % 2 == s[i] % 2)) {
+                continue;
+            }
+
+            swap(s[start], s[i]);
+            dfs(start + 1, n, s, res);
+            swap(s[start], s[i]);
+        }
+    }
+};
+```
+#Task description
+```cpp
+You are given a 0-indexed integer array nums and a positive integer k.
+We call an index i k-big if the following conditions are satisfied:
+There exist at least k different indices idx1 such that idx1 < i and nums[idx1] < nums[i].
+There exist at least k different indices idx2 such that idx2 > i and nums[idx2] < nums[i].
+Return the number of k-big indices.
+Example 1:
+Input: nums = [2,3,6,5,2,3], k = 2
+Output: 2
+Explanation: There are only two 2-big indices in nums:
+- i = 2 --> There are two valid idx1: 0 and 1. There are three valid idx2: 2, 3, and 4.
+- i = 3 --> There are two valid idx1: 0 and 1. There are two valid idx2: 3 and 4.
+Example 2:
+Input: nums = [1,1,1], k = 3
+Output: 0
+Explanation: There are no 3-big indices in nums.
+Constraints:
+1 <= nums.length <= 105
+1 <= nums[i], k <= nums.length
+```
+# Inefficient Code
+```cpp
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class Fenwick {
+public:
+    int n;
+    vector<int> tree;
+
+    Fenwick(int n) : n(n), tree(n + 1, 0) {}
+
+    void update(int i, int delta) {
+        for (++i; i <= n; i += i & -i)
+            tree[i] += delta;
+    }
+
+    int query(int i) {
+        int s = 0;
+        for (++i; i > 0; i -= i & -i)
+            s += tree[i];
+        return s;
+    }
+};
+
+class Solution {
+public:
+    int kBigIndices(vector<int>& nums, int k) {
+        int n = nums.size();
+        if (n < 2 * k + 1) return 0;
+
+        vector<int> left_count(n), right_count(n);
+
+        vector<int> comp = nums;
+        sort(comp.begin(), comp.end());
+        comp.erase(unique(comp.begin(), comp.end()), comp.end());
+
+        auto getIndex = [&](int v) {
+            return lower_bound(comp.begin(), comp.end(), v) - comp.begin();
+        };
+
+        Fenwick leftFenwick(comp.size());
+
+        for (int i = 0; i < n; i++) {
+            int idx = getIndex(nums[i]);
+            left_count[i] = leftFenwick.query(idx - 1);
+            leftFenwick.update(idx, 1);
+        }
+
+        Fenwick rightFenwick(comp.size());
+
+        for (int i = n - 1; i >= 0; i--) {
+            int idx = getIndex(nums[i]);
+            right_count[i] = rightFenwick.query(idx - 1);
+            rightFenwick.update(idx, 1);
+        }
+
+        int result = 0;
+        for (int i = 0; i < n; i++) {
+            if (left_count[i] >= k && right_count[i] >= k)
+                result++;
+        }
+
+        return result;
+    }
+};
+```
+# Efficient Code
+```cpp
+#include <vector>
+#include <queue>
+using namespace std;
+
+class Solution {
+public:
+    int kBigIndices(vector<int>& nums, int k) {
+        int n_ = nums.size();
+        vector<bool> arr1(n_, false);
+        int ans = 0;
+
+        int left_count = 0;
+        priority_queue<int> leftHeap;
+
+        int right_count = 0;
+        priority_queue<int> rightHeap;
+
+        for (int i = 0; i < n_; i++) {
+            int n = nums[i];
+
+            if (left_count < k) {
+                leftHeap.push(n);
+                left_count++;
+            }
+            else {
+                if (n > leftHeap.top()) {
+                    arr1[i] = true;
+                }
+                else if (n < leftHeap.top()) {
+                    leftHeap.pop();
+                    leftHeap.push(n);
+                }
+            }
+        }
+
+        for (int j = n_ - 1; j >= 0; j--) {
+            if (right_count < k) {
+                rightHeap.push(nums[j]);
+                right_count++;
+            }
+            else {
+                if (nums[j] > rightHeap.top() && arr1[j]) {
+                    ans++;
+                }
+                else if (nums[j] < rightHeap.top()) {
+                    rightHeap.pop();
+                    rightHeap.push(nums[j]);
+                }
+            }
+        }
+
+        return ans;
+    }
+};
+```

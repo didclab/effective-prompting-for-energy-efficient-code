@@ -1,0 +1,45 @@
+Please solve the task based on the task description by first explaining your reasoning in a brief and clear manner, and then write Solution to pass the provided test cases.
+
+You must follow the following rules:
+First, The code should be in ```python\n[Code]\n``` block.
+Second, You should NOT include the test cases inside the code block.
+Third, You do not need to write the test cases, we will provide them separately.
+Finally, Your solution must be correct and pass all provided test cases.
+
+Here is an example:
+
+# Task description
+```python
+Given an array of integers, return indices of the two numbers such that they add up to a specific target.
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+Example:
+Given nums = [2, 7, 11, 15], target = 9,
+Because nums[0] + nums[1] = 2 + 7 = 9,
+return [0, 1].
+```
+
+# Test cases
+```python
+solution = Solution()
+assert solution.twoSum([2, 7, 11, 15], 9) == [[0, 1]]
+```
+
+# Explanation
+We use a hash map to store each element and its index. While iterating through the array, we check if the complement exists in the hash map.
+
+# Code
+```python
+from typing import *
+import random
+
+class Solution:
+    def twoSum(self, nums, target):
+        hashtable = dict()
+        for i, num in enumerate(nums):
+            if target - num in hashtable:
+                return [hashtable[target - num], i]
+            hashtable[nums[i]] = i
+        return []
+```
+
+

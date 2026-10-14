@@ -1,0 +1,100 @@
+Please based on the task description write Solution to pass the provided test cases. 
+You must follow the following rules:
+First, the code should be in ```python\n[Code]\n``` block.
+Second, You should not add the provided test cases into your ```\npython[Code]\n``` block.
+Third, You do not need to write the test cases, we will provide the test cases for you.
+Finally, you should make sure that the provided test cases can pass your solution.
+
+Here are examples:
+# Task description
+```python
+Given an array of integers, return indices of the two numbers such that they add up to a specific target.
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+Example:
+Given nums = [2, 7, 11, 15], target = 9,
+Because nums[0] + nums[1] = 2 + 7 = 9,
+return [0, 1].
+```
+
+# Test cases
+```python
+solution = Solution()
+assert solution.twoSum([2, 7, 11, 15], 9) == [0, 1]
+```
+
+# Code
+```python
+from typing import *
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        hashtable = {}
+        for i, num in enumerate(nums):
+            if target - num in hashtable:
+                return [hashtable[target - num], i]
+            hashtable[num] = i
+        return []
+```
+# Task description
+```python
+Given a string s, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
+Example 1:
+Input: "A man, a plan, a canal: Panama"
+Output: true
+Example 2:
+Input: "race a car"
+Output: false
+```
+
+# Test cases
+```python
+solution = Solution()
+assert solution.isPalindrome("A man, a plan, a canal: Panama") == True
+assert solution.isPalindrome("race a car") == False
+```
+
+# Code
+```python
+from typing import *
+class Solution:
+    def isPalindrome(self, s: str) -> bool:
+        left, right = 0, len(s) - 1
+        while left < right:
+            while left < right and not s[left].isalnum():
+                left += 1
+            while left < right and not s[right].isalnum():
+                right -= 1
+            if s[left].lower() != s[right].lower():
+                return False
+            left += 1
+            right -= 1
+        return True
+```
+# Task description
+```python
+Given an integer array nums, find the contiguous subarray (containing at least one number) 
+which has the largest sum and return its sum.
+
+Example:
+Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
+Output: 6
+Explanation: [4,-1,2,1] has the largest sum = 6.
+```
+
+# Test cases
+```python
+solution = Solution()
+assert solution.maxSubArray([-2,1,-3,4,-1,2,1,-5,4]) == 6
+```
+
+# Code
+```python
+from typing import *
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        current_sum = max_sum = nums[0]
+        for num in nums[1:]:
+            current_sum = max(num, current_sum + num)
+            max_sum = max(max_sum, current_sum)
+        return max_sum
+```

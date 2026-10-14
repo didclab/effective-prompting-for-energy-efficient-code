@@ -1,0 +1,46 @@
+#Instructions to follow:
+- Write a solution based on the task description that passes the provided test cases and also unseen test cases that can be used for testing.
+- Use a chain-of-thought approach to provide a solution.
+- Avoid unnecessary conditions and checks that aren't directly required by the problem.
+- Focus only on the logic necessary to solve the task efficiently.
+- Make sure the solution handles all edge cases implied by the task description.
+- Ensure that all necessary libraries or modules used in the code are imported at the beginning of the code.
+- If the problem involves certain values or constraints, use those constraints directly in the logic, but avoid adding unnecessary validations or early returns unless they are logically required by the task.
+- Code should be in python [Code] block.
+
+#Example:
+Problem: Given nums = [2, 7, 11, 15] and target = 9,
+return the indices of the two numbers that add up to the target.
+
+#Chain of Thought:
+1. Goal: Find two numbers that sum to `target = 9` and
+return their indices.
+2. Constraints: Only one solution exists; numbers can't be reused.
+3. Approach: Use a hash table to store visited numbers and for each number, check if the complement (`target - num`) exists in table.
+4. Steps:
+- Initialize an empty hash table.
+- For each number, check if the complement is in the hash table.
+- If found, return the indices of the current and complement numbers.
+- If not, store the current number and its index in the hash table.
+5. Conclusion: The two numbers `2` (index 0) and `7` (index 1) sum to `9`. Return `[O, 1]`.
+
+# Test cases
+```python
+solution = Solution()
+assert solution.twoSum([2, 7, 11, 15], 9) == [[0, 1]]
+```
+
+# Code
+```python
+from typing import *
+import random
+
+class Solution:
+    def twoSum(self, nums, target):
+        hashtable = dict()
+        for i, num in enumerate(nums):
+            if target - num in hashtable:
+                return [hashtable[target - num], i]
+            hashtable[nums[i]] = i
+        return []
+```

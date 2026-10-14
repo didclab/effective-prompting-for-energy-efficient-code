@@ -1,0 +1,694 @@
+Please based on the task description write Solution to pass the provided test cases.
+You must follow the following rules:
+1. The code should be in ```python\n[Code]\n``` block.
+2. You do not need to write the test cases, we will provide the test cases for you.
+3. Make sure that the provided test cases can pass your solution.
+4. Prefer the energy-efficient solution from the provided examples of inefficient and efficient solutions.
+5. Always choose the most efficient algorithm in terms of both time and memory.
+
+Here are examples:
+# Task description
+```python
+You are given a string word, and an integer numFriends.\nAlice is organizing a game for her numFriends friends. There are multiple rounds in the game, where in each round:\n\nword is split into numFriends non-empty strings, such that no previous round has had the exact same split.\nAll the split words are put into a box.\n\nFind the lexicographically largest string from the box after all the rounds are finished.\n \nExample 1:\n\nInput: word = \"dbca\", numFriends = 2\nOutput: \"dbc\"\nExplanation: \nAll possible splits are:\n\n\"d\" and \"bca\".\n\"db\" and \"ca\".\n\"dbc\" and \"a\".\n\n\nExample 2:\n\nInput: word = \"gggg\", numFriends = 4\nOutput: \"g\"\nExplanation: \nThe only possible split is: \"g\", \"g\", \"g\", and \"g\".\n\n \nConstraints:\n\n1 <= word.length <= 5 * 103\nword consists only of lowercase English letters.\n1 <= numFriends <= word.length
+```
+# Inefficient Code
+```python
+class Solution:
+    def answerString(self, word: str, numFriends: int) -> str:
+        if numFriends == 1:
+            return word
+        max_ch = max(word)
+        if len(word) == numFriends:
+            return max_ch
+        max_len = len(word) - numFriends + 1
+        res = ""
+        i = 0
+        while i <len(word):
+            c = word[i]
+            l = 1
+            if c == max_ch:
+                while i+l<=len(word) and l<=max_len and res<=word[i:i+max(l,len(res))]:
+                    res = max(res,word[i:i+l])
+                    l+=1
+            i +=1
+        return res
+```
+# Efficient Code
+```python
+class Solution:
+    def answerString(self, word: str, numFriends: int) -> str:
+        if numFriends == 1:
+            return word
+        lengg = len(word) - numFriends + 1
+        max_char = max(word)
+        res = ""
+        for i in range(len(word)):
+            if word[i] == max_char:
+                sub = word[i:i+lengg]
+                res = max(res, sub)
+        return res
+```
+# Task description
+```python
+You are given an integer n representing the dimensions of an n x n grid, with the origin at the bottom-left corner of the grid. You are also given a 2D array of coordinates rectangles, where rectangles[i] is in the form [startx, starty, endx, endy], representing a rectangle on the grid. Each rectangle is defined as follows: (startx, starty): The bottom-left corner of the rectangle.(endx, endy): The top-right corner of the rectangle.Note that the rectangles do not overlap. Your task is to determine if it is possible to make either two horizontal or two vertical cuts on the grid such that: Each of the three resulting sections formed by the cuts contains at least one rectangle. Every rectangle belongs to exactly one section. Return true if such cuts can be made; otherwise, return false.
+Example 1:
+Input: n = 5, rectangles = [[1,0,5,2],[0,2,2,4],[3,2,5,3],[0,4,4,5]]
+Output: true
+Explanation:
+The grid is shown in the diagram. We can make horizontal cuts at y = 2 and y = 4. Hence, output is true.
+Example 2:
+Input: n = 4, rectangles = [[0,0,1,1],[2,0,3,4],[0,2,2,3],[3,0,4,3]]
+Output: true
+Explanation:
+We can make vertical cuts at x = 2 and x = 3. Hence, output is true.
+Example 3:
+Input: n = 4, rectangles = [[0,2,2,4],[1,0,3,2],[2,2,3,4],[3,0,4,2],[3,2,4,4]]
+Output: false
+Explanation:
+We cannot make two horizontal or two vertical cuts that satisfy the conditions. Hence, output is false.
+Constraints:
+3 <= n <= 109
+3 <= rectangles.length <= 105
+0 <= rectangles[i][0] < rectangles[i][2] <= n
+0 <= rectangles[i][1] < rectangles[i][3] <= n
+No two rectangles overlap.
+```
+# Inefficient Code
+```python
+class Solution:
+    def checkValidCuts(self, n: int, rectangles: List[List[int]]) -> bool:
+        rectangles_x = sorted([[rectangle[0], rectangle[2]] for rectangle in rectangles])
+        rectangles_y = sorted([[rectangle[1], rectangle[3]] for rectangle in rectangles])
+        prev_end_x, prev_end_y = rectangles_x[0][1], rectangles_y[0][1]
+        num_cuts_x, num_cuts_y = 0, 0
+        for i in range(1, len(rectangles_x)):
+            if rectangles_x[i][0] < prev_end_x:
+                prev_end_x = max(prev_end_x, rectangles_x[i][1])
+            else:
+                num_cuts_x += 1
+                prev_end_x = rectangles_x[i][1]
+        for i in range(1, len(rectangles_y)):
+            if rectangles_y[i][0] < prev_end_y:
+                prev_end_y = max(prev_end_y, rectangles_y[i][1])
+            else:
+                num_cuts_y += 1
+                prev_end_y = rectangles_y[i][1]
+        return num_cuts_x >= 2 or num_cuts_y >= 2
+
+```
+# Efficient Code
+```python
+from typing import List
+class Solution:
+    def checkValidCuts(self, n: int, rectangles: List[List[int]]) -> bool:
+        def can_two_cuts(axis_start: int, axis_end: int) -> bool:
+            rects = sorted(rectangles, key=lambda r: r[axis_start])
+            groups = 1
+            cur_end = rects[0][axis_end]
+            for i in range(1, len(rects)):
+                s, e = rects[i][axis_start], rects[i][axis_end]
+                if s >= cur_end:
+                    groups += 1
+                    cur_end = e
+                else:
+                    if e > cur_end:
+                        cur_end = e
+                if groups >= 3:
+                    return True
+            return False
+        return can_two_cuts(0, 2) or can_two_cuts(1, 3)
+```
+#Task description
+```python
+You are given an array of integers nums of length n and a positive integer k.
+The power of an array is defined as:Its maximum element if all of its elements are consecutive and sorted in ascending order.
+-1 otherwise.You need to find the power of all subarrays of nums of size k.
+Return an integer array results of size n - k + 1, where results[i] is the power of nums[i..(i + k - 1)].
+Example 1:
+Input: nums = [1,2,3,4,3,2,5], k = 3
+Output: [3,4,-1,-1,-1]
+Explanation:
+There are 5 subarrays of nums of size 3:
+[1, 2, 3] with the maximum element 3.
+[2, 3, 4] with the maximum element 4.
+[3, 4, 3] whose elements are not consecutive.
+[4, 3, 2] whose elements are not sorted.
+[3, 2, 5] whose elements are not consecutive.
+Example 2:
+Input: nums = [2,2,2,2,2], k = 4
+Output: [-1,-1]
+Example 3:
+Input: nums = [3,2,3,2,3,2], k = 2
+Output: [-1,3,-1,3,-1]
+Constraints:
+1 <= n == nums.length <= 500
+1 <= nums[i] <= 105
+1 <= k <= n
+```
+# Inefficient Code
+```python
+class Solution:
+    def resultsArray(self, nums: List[int], k: int) -> List[int]:
+        ans=[]
+        for i in range(len(nums)-k+1):
+            win=nums[i:i+k]
+            arr=[nums[i]+j for j in range(k)]
+            if win==arr:
+                ans.append(win[-1])
+            else:
+                ans.append(-1)
+        return ans
+```
+# Efficient Code
+```python
+class Solution:
+    def resultsArray(self, nums: List[int], k: int) -> List[int]:
+        n = len(nums)
+        if k == 1:
+            return nums
+        results = []
+        l = 1
+        for right in range(1, n):
+            if nums[right] == nums[right - 1] + 1:
+                l += 1
+            else:
+                l = 1
+            if right >= k - 1:
+                results.append(nums[right] if l >= k else -1)
+        return results
+```
+#Task description
+```python
+You are given an integer n and a 2D integer array queries.
+There are n cities numbered from 0 to n - 1. Initially, there is a unidirectional road from city i to city i + 1 for all 0 <= i < n - 1.
+queries[i] = [ui, vi] represents the addition of a new unidirectional road from city ui to city vi. After each query, you need to find the length of the shortest path from city 0 to city n - 1.
+There are no two queries such that queries[i][0] < queries[j][0] < queries[i][1] < queries[j][1].
+Return an array answer where for each i in the range [0, queries.length - 1], answer[i] is the length of the shortest path from city 0 to city n - 1 after processing the first i + 1 queries.
+Example 1:
+Input: n = 5, queries = [[2,4],[0,2],[0,4]]
+Output: [3,2,1]
+Explanation:
+After the addition of the road from 2 to 4, the length of the shortest path from 0 to 4 is 3.
+After the addition of the road from 0 to 2, the length of the shortest path from 0 to 4 is 2.
+After the addition of the road from 0 to 4, the length of the shortest path from 0 to 4 is 1.
+Example 2:
+Input: n = 4, queries = [[0,3],[0,2]]
+Output: [1,1]
+Explanation:
+After the addition of the road from 0 to 3, the length of the shortest path from 0 to 3 is 1.
+After the addition of the road from 0 to 2, the length of the shortest path remains 1.
+Constraints:
+3 <= n <= 105
+1 <= queries.length <= 105
+queries[i].length == 2
+0 <= queries[i][0] < queries[i][1] < n
+1 < queries[i][1] - queries[i][0]
+There are no repeated roads among the queries.
+There are no two queries such that i != j and queries[i][0] < queries[j][0] < queries[i][1] < queries[j][1].
+```
+# Inefficient Code
+```python
+class Solution:
+    def shortestDistanceAfterQueries(self, n: int, queries: List[List[int]]) -> List[int]:
+        s = SortedList(list(range(1, n)))
+        ans = []
+        for start, end in queries:
+            left = bisect.bisect_right(s, start)
+            right = bisect.bisect_left(s, end)
+            del s[left:right]
+            ans.append(len(s))
+        return ans
+```
+# Efficient Code
+```python
+class Solution:
+    def shortestDistanceAfterQueries(self, n: int, queries: List[List[int]]) -> List[int]:
+        d=list(range(1,n))
+        res=[]
+        cur=n-1
+        for i,j in queries:
+            while d[i]<j:
+                d[i],i=j,d[i]
+                cur-=1
+            res.append(cur)
+        return res
+```
+#Task description
+```python
+You are given an array of positive integers nums of length n.
+We call a pair of non-negative integer arrays (arr1, arr2) monotonic if:
+The lengths of both arrays are n.
+arr1 is monotonically non-decreasing, in other words, arr1[0] <= arr1[1] <= ... <= arr1[n - 1].
+arr2 is monotonically non-increasing, in other words, arr2[0] >= arr2[1] >= ... >= arr2[n - 1].
+arr1[i] + arr2[i] == nums[i] for all 0 <= i <= n - 1.
+Return the count of monotonic pairs.
+Since the answer may be very large, return it modulo 109 + 7.
+Example 1:
+Input: nums = [2,3,2]
+Output: 4
+Explanation:
+The good pairs are:
+([0, 1, 1], [2, 2, 1])
+([0, 1, 2], [2, 2, 0])
+([0, 2, 2], [2, 1, 0])
+([1, 2, 2], [1, 1, 0])
+Example 2:
+Input: nums = [5,5,5,5]
+Output: 126
+Constraints:
+1 <= n == nums.length <= 2000
+1 <= nums[i] <= 50
+```
+# Inefficient Code
+```python
+class Solution:
+    def countOfPairs(self, nums: List[int]) -> int:
+        M = 1_000_000_007
+        dp = {(x, nums[0] - x): 1 for x in range(nums[0] + 1)}
+        for i in range(1, len(nums)):
+            num = nums[i]
+            dp1 = dict()
+            for j in range(0, num + 1):
+                total = 0
+                for k in range(nums[i - 1] + 1):
+                    if k >= j and nums[i - 1] - k <= num - j:
+                        total += dp.get((k, nums[i - 1] - k), 0)
+                if total:
+                    dp1[(j, num - j)] = total
+            dp = dp1
+        return sum(dp.values()) % M
+```
+# Efficient Code
+```python
+class Solution:
+    def countOfPairs(self, nums: List[int]) -> int:
+        n, mn = len(nums), nums.pop(0)
+        num1, num2 = 0, mn
+        for num in nums:
+            if num < num1: return 0
+            if num > num1 + num2:
+                num1 = num - num2
+            num2 = num - num1
+            if num2 < mn: mn = num2
+        return comb(n + mn, mn) % 1_000_000_007
+```
+#Task description
+```python
+There is an undirected tree with n nodes labeled from 0 to n - 1, and rooted at node 0. You are given a 2D integer array edges of length n - 1, where edges[i] = [ai, bi] indicates that there is an edge between nodes ai and bi in the tree.
+A node is good if all the subtrees rooted at its children have the same size.
+Return the number of good nodes in the given tree.
+A subtree of treeName is a tree consisting of a node in treeName and all of its descendants.
+Example 1:
+Input: edges = [[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]]
+Output: 7
+Explanation:
+All of the nodes of the given tree are good.
+Example 2:
+Input: edges = [[0,1],[1,2],[2,3],[3,4],[0,5],[1,6],[2,7],[3,8]]
+Output: 6
+Explanation:
+There are 6 good nodes in the given tree. They are colored in the image above.
+Example 3:
+Input: edges = [[0,1],[1,2],[1,3],[1,4],[0,5],[5,6],[6,7],[7,8],[0,9],[9,10],[9,12],[10,11]]
+Output: 12
+Explanation:
+All nodes except node 9 are good.
+Constraints:
+2 <= n <= 105
+edges.length == n - 1
+edges[i].length == 2
+0 <= ai, bi < n
+The input is generated such that edges represents a valid tree.
+```
+# Inefficient Code
+```python
+class Solution:
+    def countGoodNodes(self, edges: List[List[int]]) -> int:
+        hashmap = {}
+        num_nodes = len(edges) + 1
+        adj_matrix = [[] for node in range(num_nodes)]
+        for a, b in edges:
+            adj_matrix[a].append(b)
+            adj_matrix[b].append(a)
+        self.dfs(0, adj_matrix, -1, hashmap)
+        total_count = 0
+        for node in range(num_nodes):
+            child_sizes = []
+            for neighbor in adj_matrix[node]:
+                if hashmap.get(neighbor) < hashmap[node]:
+                    child_sizes.append(hashmap[neighbor][0])
+            # A node is good if all children have equal subtree sizes
+            if len(child_sizes) <= 1 or all(size == child_sizes[0] for size in child_sizes):
+                total_count += 1
+        return total_count
+    def dfs(self, node, adj_matrix, parent, hashmap):
+        count = 0
+        neighbours = []
+        for children in adj_matrix[node]:
+            count += 1
+            if children != parent:
+                neighbours.append(children)
+                count += self.dfs(children, adj_matrix,  node, hashmap)
+        hashmap[node] = (count, neighbours)
+        return count
+```
+# Efficient Code
+```python
+class Solution:
+    def countGoodNodes(self, edges: List[List[int]]) -> int:
+        adj_list = [[] for _ in range(len(edges) + 1)]
+        for n1, n2 in edges:
+            adj_list[n1].append(n2)
+            adj_list[n2].append(n1)
+        res = 0
+        def recurse(parent, curr):
+            nonlocal res
+            sum = 0
+            good = True
+            good_cnt = -1
+            for adj in adj_list[curr]:
+                if adj != parent:
+                    adj_cnt = recurse(curr, adj)
+                    sum += adj_cnt
+                    if adj_cnt != good_cnt and good_cnt != -1:
+                        good = False
+                    else:
+                        good_cnt = adj_cnt
+            if good:
+                res += 1
+            return sum + 1
+        recurse(-1, 0)
+        return res
+```
+#Task description
+```python
+You are given a positive number n.
+Return the smallest number x greater than or equal to n, such that the binary representation of x contains only set bits
+Example 1:
+Input: n = 5
+Output: 7
+Explanation:
+The binary representation of 7 is "111".
+Example 2:
+Input: n = 10
+Output: 15
+Explanation:
+The binary representation of 15 is "1111".
+Example 3:
+Input: n = 3
+Output: 3
+Explanation:
+The binary representation of 3 is "11".
+Constraints:
+1 <= n <= 1000
+```
+# Inefficient Code
+```python
+class Solution:
+    def smallestNumber(self, n: int) -> int:
+        while n>=0:
+            k1=bin(n)[2:]
+            k2=k1.count('1')
+            if k2==len(k1):
+                return n
+            n+=1
+```
+# Efficient Code
+```python
+class Solution:
+    def smallestNumber(self, n: int) -> int:
+        i = 1
+        while 2**i - 1 < n:
+            i += 1
+        return 2**i - 1
+```
+#Task description
+```python
+You are given an integer array nums and two integers k and numOperations.
+You must perform an operation numOperations times on nums, where in each operation you:
+Select an index i that was not selected in any previous operations.
+Add an integer in the range [-k, k] to nums[i].
+Return the maximum possible frequency of any element in nums after performing the operations.
+Example 1:
+Input: nums = [1,4,5], k = 1, numOperations = 2
+Output: 2
+Explanation:
+We can achieve a maximum frequency of two by:
+Adding 0 to nums[1]. nums becomes [1, 4, 5].
+Adding -1 to nums[2]. nums becomes [1, 4, 4].
+Example 2:
+Input: nums = [5,11,20,20], k = 5, numOperations = 1
+Output: 2
+Explanation:
+We can achieve a maximum frequency of two by:
+Adding 0 to nums[1].
+Constraints:
+1 <= nums.length <= 105
+1 <= nums[i] <= 105
+0 <= k <= 105
+0 <= numOperations <= nums.length
+```
+# Inefficient Code
+```python
+class Solution:
+    def maxFrequency(self, nums: List[int], k: int, numOperations: int) -> int:
+        diff = []
+        cnt = Counter()
+        for i in nums:
+            diff.append([i - k, 1])
+            diff.append([i + k + 1, -1])
+            cnt[i] += 1
+            diff.append([i, 0])
+        diff.sort()
+        res = 0
+        curr = 0
+        for idx, change in diff:
+            curr += change
+            res = max(res, min(cnt[idx] + numOperations, curr))
+        return res
+```
+# Efficient Code
+```python
+class Solution:
+    def maxFrequency(self, nums: List[int], k: int, numOperations: int) -> int:
+        maxi=max(nums)
+        pre=[0]*(maxi+1)
+        prev=ans=0
+        for i in nums:
+            pre[i]+=1
+        cur=sum(pre[:k])
+        for num in range(maxi+1):
+            cur-=pre[num]
+            if num+k<=maxi:
+                cur+=pre[num+k]
+            if num>0:
+                prev+=pre[num-1]
+            if num>k+1:
+                prev-=pre[num-k-1]
+            ans=max(ans,pre[num]+min(numOperations,prev+cur))
+        return ans
+```
+#Task description
+```python
+You are given an integer n and a 2D integer array queries.
+There are n cities numbered from 0 to n - 1. Initially, there is a unidirectional road from city i to city i + 1 for all 0 <= i < n - 1.
+queries[i] = [ui, vi] represents the addition of a new unidirectional road from city ui to city vi. After each query, you need to find the length of the shortest path from city 0 to city n - 1.
+Return an array answer where for each i in the range [0, queries.length - 1], answer[i] is the length of the shortest path from city 0 to city n - 1 after processing the first i + 1 queries.
+Example 1:
+Input: n = 5, queries = [[2,4],[0,2],[0,4]]
+Output: [3,2,1]
+Explanation:
+After the addition of the road from 2 to 4, the length of the shortest path from 0 to 4 is 3.
+After the addition of the road from 0 to 2, the length of the shortest path from 0 to 4 is 2.
+After the addition of the road from 0 to 4, the length of the shortest path from 0 to 4 is 1.
+Example 2:
+Input: n = 4, queries = [[0,3],[0,2]]
+Output: [1,1]
+Explanation:
+After the addition of the road from 0 to 3, the length of the shortest path from 0 to 3 is 1.
+After the addition of the road from 0 to 2, the length of the shortest path remains 1.
+Constraints:
+3 <= n <= 500
+1 <= queries.length <= 500
+queries[i].length == 2
+0 <= queries[i][0] < queries[i][1] < n
+1 < queries[i][1] - queries[i][0]
+There are no repeated roads among the queries.
+```
+# Inefficient Code
+```python
+class Solution:
+    def bfs(self,n,adj):
+            q=deque([(0,0)])
+            visit=set()
+            while q:
+                node,dist=q.popleft()
+                visit.add(node)
+                if node==n-1:
+                    return dist
+                for nb in adj[node]:
+                    if nb not in visit:
+                        q.append((nb,dist+1))
+    def shortestDistanceAfterQueries(self, n: int, queries: List[List[int]]) -> List[int]:
+        adj=[[] for _ in range(n)]
+        for i in range(1,n):
+            adj[i-1].append(i)
+
+        ans=[]
+        for u,v in queries:
+            adj[u].append(v)
+            ans.append(self.bfs(n,adj))
+        return ans
+```
+# Efficient Code
+```python
+class Solution:
+    def shortestDistanceAfterQueries(self, n: int, queries: List[List[int]]) -> List[int]:
+        # base chain
+        g = [[i + 1] for i in range(n - 1)] + [[]]
+        # shortest distances from 0; start with the chain distances
+        dist = list(range(n))
+        ans = []
+        for u, v in queries:
+            g[u].append(v)
+            # If the new edge can improve dist[v], propagate the improvement forward
+            if dist[u] + 1 < dist[v]:
+                dist[v] = dist[u] + 1
+                q = deque([v])
+                while q:
+                    x = q.popleft()
+                    for y in g[x]:
+                        if dist[x] + 1 < dist[y]:
+                            dist[y] = dist[x] + 1
+                            q.append(y)
+
+            ans.append(dist[-1])
+        return ans
+```
+#Task description
+```python
+Given an integer n, an alternating permutation is a permutation of the first n positive integers such that no two adjacent elements are both odd or both even.
+Return all such alternating permutations sorted in lexicographical order.
+Example 1:
+Input: n = 4
+Output: [[1,2,3,4],[1,4,3,2],[2,1,4,3],[2,3,4,1],[3,2,1,4],[3,4,1,2],[4,1,2,3],[4,3,2,1]]
+Example 2:
+Input: n = 2
+Output: [[1,2],[2,1]]
+Example 3:
+Input: n = 3
+Output: [[1,2,3],[3,2,1]]
+Constraints:
+1 <= n <= 10
+```
+# Inefficient Code
+```python
+from itertools import permutations
+class Solution:
+    def permute(self, n: int) -> List[List[int]]:
+        res = []
+        lst = [i for i in range(1,n+1)]
+        for comb in permutations(lst,n):
+            x = 1
+            for i in range(n-1):
+                if (comb[i]%2 == 0 and comb[i+1]%2 != 0) or (comb[i]%2 != 0 and comb[i+1]%2 == 0):
+                    x+=1
+            if x==n:
+                res.append(list(comb))
+        return res
+```
+# Efficient Code
+```python
+class Solution:
+    def permute(self, n: int) -> List[List[int]]:
+        res=[]
+        s=[i for i in range(1,n+1)]
+        def dfs(start):
+            if start==n:
+                res.append(s[:])
+                return
+            for i in range(start,n):
+                if start>0 and s[start-1]%2== s[i]%2:
+                    continue
+                s[start],s[i]=s[i],s[start]
+                dfs(start+1)
+                s[start],s[i]=s[i],s[start]
+        dfs(0)
+        return sorted(res)
+```
+#Task description
+```python
+You are given a 0-indexed integer array nums and a positive integer k.
+We call an index i k-big if the following conditions are satisfied:
+There exist at least k different indices idx1 such that idx1 < i and nums[idx1] < nums[i].
+There exist at least k different indices idx2 such that idx2 > i and nums[idx2] < nums[i].
+Return the number of k-big indices.
+Example 1:
+Input: nums = [2,3,6,5,2,3], k = 2
+Output: 2
+Explanation: There are only two 2-big indices in nums:
+- i = 2 --> There are two valid idx1: 0 and 1. There are three valid idx2: 2, 3, and 4.
+- i = 3 --> There are two valid idx1: 0 and 1. There are two valid idx2: 3 and 4.
+Example 2:
+Input: nums = [1,1,1], k = 3
+Output: 0
+Explanation: There are no 3-big indices in nums.
+Constraints:
+1 <= nums.length <= 105
+1 <= nums[i], k <= nums.length
+```
+# Inefficient Code
+```python
+class Solution:
+    def kBigIndices(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        if n < 2 * k + 1:
+            return 0
+        left_count = [0] * n
+        right_count = [0] * n
+        left_sorted = SortedList()
+        for i in range(n):
+            left_count[i] = left_sorted.bisect_left(nums[i])
+            left_sorted.add(nums[i])
+        right_sorted = SortedList()
+        for i in range(n - 1, -1, -1):
+            right_count[i] = right_sorted.bisect_left(nums[i])
+            right_sorted.add(nums[i])
+        result = 0
+        for i in range(n):
+            if left_count[i] >= k and right_count[i] >= k:
+                result += 1
+        return result
+```
+# Efficient Code
+```python
+class Solution:
+    def kBigIndices(self, nums: List[int], k: int) -> int:
+        n_ = len(nums)
+        arr1 = [False] * n_
+        ans = 0
+        left_count = 0
+        leftHeap = []
+        right_count = 0
+        rightHeap = []
+        for i,n in enumerate(nums):
+            if left_count < k:
+                heapq.heappush(leftHeap, -n)
+                left_count += 1
+            else:
+                if n > -1 * (leftHeap[0]):
+                    arr1[i] = True
+                elif n < -1 * (leftHeap[0]):
+                    heapq.heappushpop(leftHeap, -n)
+        for j in range(n_-1, -1, -1):
+            if right_count < k:
+                heapq.heappush(rightHeap, -nums[j])
+                right_count += 1
+            else:
+                if (nums[j] > -1 * (rightHeap[0])) and arr1[j] is True:
+                    ans += 1
+                elif nums[j] < -1 * (rightHeap[0]):
+                    heapq.heappop(rightHeap)
+                    heapq.heappush(rightHeap, -nums[j])
+        return ans
+```
