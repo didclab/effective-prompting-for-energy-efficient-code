@@ -40,6 +40,7 @@ The results are organized to support analysis at multiple levels:
 This project was conducted in collaboration with the following contributors:
 
 - **[Dr. Tevfik Kosar](https://cse.buffalo.edu/faculty/tkosar/)** - University at Buffalo, Buffalo, NY, USA
+- **[Ritika Rekhi](https://github.com/rrekhi1)** - University at Buffalo, Buffalo, NY, USA
 - **[Dr. Bing Zhang](https://github.com/bingzhang)** - National Center for Supercomputing Applications, Urbana, IL, USA
 - **[Md Arman Islam](https://github.com/armanbishal)** -University at Buffalo, Buffalo, NY, USA
 - **[Jaya Krishna Pasham](https://github.com/jayakrishna855)** - University at Buffalo, Buffalo, NY, USA
