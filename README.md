@@ -48,10 +48,10 @@ This project was conducted in collaboration with the following contributors:
 
 - **[Dr. Tevfik Kosar](https://cse.buffalo.edu/faculty/tkosar/)** - University at Buffalo, Buffalo, NY, USA
 - **[Dr. Bing Zhang](https://github.com/bingzhang)** - National Center for Supercomputing Applications, Urbana, IL, USA
-- **[Md Arman Islam]()** -University at Buffalo, Buffalo, NY, USA
+- **[Md Arman Islam](https://github.com/armanbishal)** -University at Buffalo, Buffalo, NY, USA
 - **[Jaya Krishna Pasham](https://github.com/jayakrishna855)** - University at Buffalo, Buffalo, NY, USA
 - **[Yeswanth Chitturi](https://github.com/s1th883)** - University at Buffalo, Buffalo, NY, USA
-- **[Akshay Paramesha]()** - University at Buffalo, Buffalo, NY, USA
+- **[Akshay Paramesha](https://github.com/Akshay-2001)** - University at Buffalo, Buffalo, NY, USA
 - **[Isha Valiveti](https://github.com/isha912)** - University at Buffalo, Buffalo, NY, USA
 - **[Dr. Asif Imran](https://asif33.github.io/)** - University at Buffalo, Buffalo, NY, USA
 - **Dr. Bekir Turkkan** - IBM Research, Yorktown Heights, NY, USA
