@@ -1,23 +1,13 @@
 # Improving the Energy-Efficiency of LLM-generated code through Effective Prompting
-Prompting strategies, energy measurement scripts and experimental results for paper: https://arxiv.org/abs/2610.02571
+Prompting strategies, datasets, energy measurement scripts and experimental results for paper: https://arxiv.org/abs/2610.02571
 
 ## Directory Structure
 
-The repository is organized into three main directories:
+The repository is organized into four main directories:
 
 ### 1. Data
 
-The `data/` directory contains the prompting strategies and datasets used in the initial and final analyses.
-
-#### Initial Analysis
-
-The `initial_analysis/` directory contains the prompts and datasets used in the preliminary experiments. This analysis was conducted exclusively for Python and evaluated **21 prompting strategies** for 110 problems.
-
-It also includes the `prompt_example_format/` directory, which provides json files for each of the prompting strategy illustrating how they are structured for sample problem: LeetCode 40- Combination Sum II .
-
-#### Final Analysis
-
-The `final_analysis/` directory contains the prompts and datasets used in the final experiments. This analysis evaluates **8 prompting strategies** for energy-efficient code generation in Python and C++.
+The `data/` directory contains the datasets used in the initial and final analyses.
 
 ### 2. Energy Measurement Scripts
 
@@ -31,7 +21,10 @@ The measurement pipeline includes:
 
 For detailed instructions, command-line arguments, and the complete measurement workflow, refer to the [`energy_measurement_scripts/README.md`](energy_measurement_scripts/README.md) file.
 
-### 3. Results
+### 3. Prompts
+This folder contains the prompts used in the initial and final analyses along with their sample usage. For detailed information about the prompts, please refer to [`prompts/README.md`](./prompts/README.md) file.
+
+### 4. Results
 
 The `results/` directory contains the experimental measurements and analysis results for the evaluated models in both Python and C++.
 
